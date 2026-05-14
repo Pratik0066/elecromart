@@ -50,7 +50,7 @@ const CartPage = () => {
                   <Link to={`/product/${item._id}`} className="text-lg font-bold text-gray-800 hover:text-blue-600">
                     {item.name}
                   </Link>
-                  <p className="text-blue-600 font-bold mt-1">${item.price}</p>
+                  <p className="text-blue-600 font-bold mt-1">₹{item.price}</p>
                 </div>
 
                 {/* Quantity Controls */}
@@ -82,16 +82,17 @@ const CartPage = () => {
             <div className="space-y-4 mb-6">
               <div className="flex justify-between text-gray-600">
                 <span>Items ({cartItems.reduce((acc, item) => acc + item.qty, 0)})</span>
-                <span>${cart.itemsPrice}</span>
+                <span>₹{cart.itemsPrice}</span>
               </div>
               <div className="flex justify-between text-gray-600">
                 <span>Shipping</span>
-                <span>${cart.shippingPrice}</span>
+                <span>₹{cart.shippingPrice}</span>
               </div>
               <hr />
+                           
               <div className="flex justify-between text-2xl font-black text-gray-900">
                 <span>Total</span>
-                <span>${cart.totalPrice}</span>
+                <span>₹{cart.totalPrice}</span>
               </div>
             </div>
             <button

@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useRegisterMutation } from '../slices/usersApiSlice';
 import { setCredentials } from '../slices/authSlice';
 import { UserPlus, Mail, Lock, User, ArrowRight } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 const RegisterPage = () => {
   const [name, setName] = useState('');
@@ -30,14 +31,14 @@ const RegisterPage = () => {
   const submitHandler = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
-      alert('Passwords do not match');
+      toast.error('Passwords do not match');
     } else {
       try {
         const res = await register({ name, email, password }).unwrap();
         dispatch(setCredentials({ ...res }));
         navigate(redirect);
       } catch (err) {
-        alert(err?.data?.message || err.error);
+        toast.error(err?.data?.message || err.error);
       }
     }
   };

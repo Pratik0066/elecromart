@@ -7,25 +7,26 @@ import {
   verifyPayment,
   updateOrderToDelivered,
   getOrders,
+  getAdminStats,
 } from '../controllers/orderController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
-// /api/orders
+// Base: /api/orders
 router.route('/')
-  .post(protect, addOrderItems) // User: Place an order
-  .get(protect, admin, getOrders); // Admin: Get all orders
+  .post(protect, addOrderItems)
+  .get(protect, admin, getOrders);
 
-// /api/orders/myorders
-router.route('/myorders').get(protect, getMyOrders); // User: See my past orders
+router.route('/stats').get(protect, admin, getAdminStats);
 
-// /api/orders/:id
-router.route('/:id').get(protect, getOrderById); // User/Admin: See specific order details
+router.route('/mine').get(protect, getMyOrders);
 
-// /api/orders/:id/pay
-router.route('/:id/pay').put(protect,  verifyPayment); // User: Mark as paid via Razorpay
+router.route('/:id').get(protect, getOrderById);
 
-// /api/orders/:id/deliver
-router.route('/:id/deliver').put(protect, admin, updateOrderToDelivered); // Admin: Mark as shipped
+// Payment Verification (Razorpay)
+// Changed from .put to .post to match standard verification patterns
 router.route('/:id/verify').post(protect, verifyPayment);
+
+// Admin: Mark as Delivered
+router.route('/:id/deliver').put(protect, admin, updateOrderToDelivered);
 
 export default router;

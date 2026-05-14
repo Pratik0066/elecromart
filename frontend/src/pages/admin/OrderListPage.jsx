@@ -44,7 +44,7 @@ const OrderListPage = () => {
                   <td className="px-6 py-4 text-xs font-medium text-gray-400">{order._id}</td>
                   <td className="px-6 py-4 font-bold text-gray-900">{order.user && order.user.name}</td>
                   <td className="px-6 py-4 text-sm">{order.createdAt.substring(0, 10)}</td>
-                  <td className="px-6 py-4 font-black text-blue-600">${order.totalPrice}</td>
+                  <td className="px-6 py-4 font-black text-blue-600">₹{order.totalPrice}</td>
                   <td className="px-6 py-4">
                     {order.isPaid ? (
                       <CheckCircle className="text-green-500 mx-auto" size={18} />

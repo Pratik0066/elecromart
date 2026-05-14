@@ -1,69 +1,53 @@
+import { ORDERS_URL, RAZORPAY_URL } from '../constants';
 import { apiSlice } from './apiSlice';
 
 export const ordersApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    // Endpoint to create a new order
     createOrder: builder.mutation({
-      query: (order) => ({
-        url: '/api/orders',
-        method: 'POST',
-        body: { ...order },
-      }),
+      query: (order) => ({ url: ORDERS_URL, method: 'POST', body: { ...order } }),
     }),
-
-    // Endpoint to get a single order's details by ID
     getOrderDetails: builder.query({
-      query: (id) => ({
-        url: `/api/orders/${id}`,
-      }),
+      query: (id) => ({ url: `${ORDERS_URL}/${id}` }),
       keepUnusedDataFor: 5,
     }),
-
-    // NEW: Endpoint to get orders belonging to the logged-in user
-    getMyOrders: builder.query({
-      query: () => ({
-        url: '/api/orders/mine',
-      }),
-      keepUnusedDataFor: 5,
-    }),
-    
-
-    
-   payOrder: builder.mutation({
+    payOrder: builder.mutation({
       query: ({ orderId, details }) => ({
-        url: `/api/orders/${orderId}/pay`,
-        method: 'PUT',
-        body: { ...details }, // This will contain the Razorpay Payment ID
+        url: `${ORDERS_URL}/${orderId}/verify`,
+        method: 'POST',
+        body: details,
       }),
     }),
     getRazorpayKey: builder.query({
-      query: () => ({
-        url: '/api/config/razorpay',
-      }),
+      query: () => ({ url: RAZORPAY_URL }),
     }),
-    getOrders: builder.query({
-      query: () => ({
-        url: '/api/orders',
-      }),
+    getMyOrders: builder.query({
+      query: () => ({ url: `${ORDERS_URL}/mine` }),
       keepUnusedDataFor: 5,
     }),
+    getOrders: builder.query({
+      query: () => ({ url: ORDERS_URL }),
+      keepUnusedDataFor: 5,
+      providesTags: ['Orders'],
+    }),
     deliverOrder: builder.mutation({
-      query: (orderId) => ({
-        url: `/api/orders/${orderId}/deliver`,
-        method: 'PUT',
-      }),
+      query: (orderId) => ({ url: `${ORDERS_URL}/${orderId}/deliver`, method: 'PUT' }),
+      invalidatesTags: ['Orders'],
+    }),
+    getAdminStats: builder.query({
+      query: () => ({ url: `${ORDERS_URL}/stats` }),
+      keepUnusedDataFor: 5,
+      providesTags: ['Orders'],
     }),
   }),
 });
 
-// Export all the hooks for use in your components
 export const { 
   useCreateOrderMutation, 
   useGetOrderDetailsQuery, 
-  useGetMyOrdersQuery, 
   usePayOrderMutation, 
-  useGetRazorpayKeyQuery,
-  useGetOrdersQuery,
+  useGetRazorpayKeyQuery, 
+  useGetMyOrdersQuery, 
+  useGetOrdersQuery, 
   useDeliverOrderMutation,
-
+  useGetAdminStatsQuery,
 } = ordersApiSlice;

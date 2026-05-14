@@ -32,13 +32,12 @@ const ProfilePage = () => {
         _id: userInfo._id,
         name,
         email,
-
         password,
       }).unwrap();
       dispatch(setCredentials({ ...res }));
-      alert('Profile Updated Successfully!'); 
+      toast.success('Profile Updated Successfully!'); 
     } catch (err) {
-      alert(err?.data?.message || err.error);
+      toast.error(err?.data?.message || err.error);
     }
   };
   return (
@@ -110,7 +109,7 @@ const ProfilePage = () => {
                     <tr key={order._id} className="hover:bg-gray-50 transition">
                       <td className="px-6 py-4 font-medium text-xs text-gray-400">{order._id.substring(0, 10)}...</td>
                       <td className="px-6 py-4 text-sm">{order.createdAt.substring(0, 10)}</td>
-                      <td className="px-6 py-4 font-bold">${order.totalPrice}</td>
+                      <td className="px-6 py-4 font-bold">₹{order.totalPrice}</td>
                       <td className="px-6 py-4 text-center">
                         {order.isPaid ? (
                           <CheckCircle className="text-green-500 mx-auto" size={18} />

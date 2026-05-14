@@ -12,7 +12,7 @@ const CheckoutSteps = ({ step1, step2, step3, step4 }) => {
         )}
       </div>
 
-      <div className="h-[2px] w-8 bg-gray-200"></div>
+      <div className="h-0.5 w-8 bg-gray-200"></div>
 
       {/* Step 2: Shipping */}
       <div className="flex items-center gap-2">
@@ -23,7 +23,7 @@ const CheckoutSteps = ({ step1, step2, step3, step4 }) => {
         )}
       </div>
 
-      <div className="h-[2px] w-8 bg-gray-200"></div>
+      <div className="h-0.5 w-8 bg-gray-200"></div>
 
       {/* Step 3: Payment */}
       <div className="flex items-center gap-2">
@@ -34,7 +34,7 @@ const CheckoutSteps = ({ step1, step2, step3, step4 }) => {
         )}
       </div>
 
-      <div className="h-[2px] w-8 bg-gray-200"></div>
+      <div className="h-0.5 w-8 bg-gray-200"></div>
 
       {/* Step 4: Place Order */}
       <div className="flex items-center gap-2">

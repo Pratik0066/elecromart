@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useLoginMutation } from '../slices/usersApiSlice.js'; // Added .js
 import { setCredentials } from '../slices/authSlice.js';     // Added .js
 import { LogIn } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 const LoginPage = () => {
   const [email, setEmail] = useState('');
@@ -37,7 +38,7 @@ const LoginPage = () => {
       dispatch(setCredentials({ ...res }));
       navigate(redirect);
     } catch (err) {
-      alert(err?.data?.message || err.error);
+      toast.error(err?.data?.message || err.error);
     }
   };
 

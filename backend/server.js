@@ -4,7 +4,8 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import path from 'path';
 import connectDB from './config/db.js';
-import productRoutes from './routes/productRoutes.js'; // Import your routes here
+import productRoutes from './routes/productRoutes.js'; 
+import configRoutes from './routes/configRoutes.js';// Import your routes here
 
 // Load environment variables
 dotenv.config();
@@ -20,7 +21,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser()); // 
 app.use(cors());
 
+
 // Routes
+app.use('/api/config', configRoutes);
 app.use('/api/products', productRoutes);
 
 app.get('/', (req, res) => {

@@ -10,13 +10,16 @@ import {
   deleteUser,
   getUserById,
   updateUser,
+  addToWishlist,
+  removeFromWishlist,
+  getWishlist,
 } from '../controllers/userController.js';
 import { protect, admin } from '../middleware/authMiddleware.js';
 
 // Base Route: /api/users
 router.route('/')
-  .post(registerUser)           // Public: Register
-  .get(protect, admin, getUsers); // Admin: View all users
+  .post(registerUser)
+  .get(protect, admin, getUsers);
 
 // Auth & Logout
 router.post('/auth', authUser);
@@ -26,6 +29,13 @@ router.post('/logout', logoutUser);
 router.route('/profile')
   .get(protect, getUserProfile)
   .put(protect, updateUserProfile);
+
+// Wishlist (Private)
+router.route('/wishlist')
+  .get(protect, getWishlist)
+  .post(protect, addToWishlist);
+router.route('/wishlist/:productId')
+  .delete(protect, removeFromWishlist);
 
 // Admin-Only Operations: /api/users/:id
 router.route('/:id')

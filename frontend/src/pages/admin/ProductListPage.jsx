@@ -6,7 +6,8 @@ import { toast } from 'react-toastify';
 const ProductListPage = () => {
 
   const navigate = useNavigate();
-  const { data: products, isLoading, error, refetch } = useGetProductsQuery();
+  const { data, isLoading, error, refetch } = useGetProductsQuery({});
+  const products = data?.products || [];
   const [deleteProduct, { isLoading: loadingDelete }] = useDeleteProductMutation();
   const [createProduct, { isLoading: loadingCreate }] = useCreateProductMutation();
 
@@ -14,9 +15,10 @@ const ProductListPage = () => {
     if (window.confirm('Are you sure you want to delete this product?')) {
       try {
         await deleteProduct(id);
-        refetch(); // Refresh the list
+        refetch();
+        toast.success('Product deleted');
       } catch (err) {
-        alert(err?.data?.message || err.error);
+        toast.error(err?.data?.message || err.error);
       }
     }
   };
@@ -70,11 +72,11 @@ const createProductHandler = async () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
-              {products.map((product) => (
+              {Array.isArray(products) && products.map((product) => (
                 <tr key={product._id} className="hover:bg-gray-50 transition">
                   <td className="px-6 py-4 text-xs text-gray-400">{product._id}</td>
                   <td className="px-6 py-4 font-bold text-gray-900">{product.name}</td>
-                  <td className="px-6 py-4 font-black text-blue-600">${product.price}</td>
+                  <td className="px-6 py-4 font-black text-blue-600">₹{product.price}</td>
                   <td className="px-6 py-4 text-gray-600">{product.category}</td>
                   <td className="px-6 py-4 text-gray-600">{product.brand}</td>
                   <td className="px-6 py-4 flex gap-2">

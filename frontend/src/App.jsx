@@ -18,10 +18,12 @@ import PlaceOrderPage from './pages/PlaceOrderPage';
 import OrderPage from './pages/OrderPage';
 
 // Admin Pages
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import OrderListPage from './pages/admin/OrderListPage';
 import ProductListPage from './pages/admin/ProductListPage';
 import ProductEditPage from "./pages/admin/ProductEditPage";
 import UserListPage from './pages/admin/UserListPage';
+import WishlistPage from './pages/WishlistPage';
 import AIChatBot from './components/AIChatBot';
 
 function App() {
@@ -44,8 +46,10 @@ function App() {
           <Route path="/payment" element={<PaymentPage />} />
           <Route path="/placeorder" element={<PlaceOrderPage />} />
           <Route path="/order/:id" element={<OrderPage />} />
+          <Route path="/wishlist" element={<WishlistPage />} />
 
           {/* Admin Management Routes */}
+          <Route path="/admin/dashboard" element={<AdminDashboardPage />} />
           <Route path="/admin/orderlist" element={<OrderListPage />} />
           <Route path="/admin/productlist" element={<ProductListPage />} />
           <Route path="/admin/product/:id/edit" element={<ProductEditPage />} />
@@ -66,7 +70,7 @@ function App() {
           </p>
         </div>
       </footer>
-      <AIChatBot /> {/* Add it here */}
+      <AIChatBot />
     </Router>
   );
 }

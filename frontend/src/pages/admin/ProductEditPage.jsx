@@ -6,6 +6,7 @@ import {
   useUploadProductImageMutation 
 } from '../../slices/productsApiSlice';
 import { ArrowLeft, Save, Package, Upload, Image as ImageIcon } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 const ProductEditPage = () => {
   const { id: productId } = useParams();
@@ -41,9 +42,9 @@ const ProductEditPage = () => {
     try {
       const res = await uploadProductImage(formData).unwrap();
       setImage(res.image);
-      alert('Image uploaded successfully');
+      toast.success('Image uploaded successfully');
     } catch (err) {
-      alert(err?.data?.message || err.error);
+      toast.error(err?.data?.message || err.error);
     }
   };
 
@@ -60,10 +61,10 @@ const ProductEditPage = () => {
         countInStock,
         description,
       }).unwrap();
-      alert('Product updated successfully!');
+      toast.success('Product updated successfully!');
       navigate('/admin/productlist');
     } catch (err) {
-      alert(err?.data?.message || err.error);
+      toast.error(err?.data?.message || err.error);
     }
   };
 

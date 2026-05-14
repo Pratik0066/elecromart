@@ -19,7 +19,7 @@ const PaymentPage = () => {
     }
   }, [shippingAddress, navigate]);
 
-  const [paymentMethod, setPaymentMethod] = useState('PayPal');
+  const [paymentMethod, setPaymentMethod] = useState('Razorpay');
 
   const submitHandler = (e) => {
     e.preventDefault();
@@ -46,14 +46,24 @@ const PaymentPage = () => {
                 type="radio"
                 className="w-5 h-5 text-blue-600 focus:ring-blue-500"
                 name="paymentMethod"
-                value="PayPal"
+                value="Razorpay"
                 checked
                 onChange={(e) => setPaymentMethod(e.target.value)}
               />
-              <span className="font-bold text-gray-800">PayPal or Credit Card</span>
+              <CreditCard className="text-blue-600" size={20} />
+              <span className="font-bold text-gray-800">Razorpay (Credit Card / UPI / Net Banking)</span>
             </label>
             
-            {/* You can add more methods here in the future */}
+            <label className="flex items-center gap-4 p-4 border border-gray-200 rounded-xl cursor-pointer hover:border-blue-500 transition has-[:checked]:border-blue-600 has-[:checked]:bg-blue-50">
+              <input
+                type="radio"
+                className="w-5 h-5 text-blue-600 focus:ring-blue-500"
+                name="paymentMethod"
+                value="COD"
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              />
+              <span className="font-bold text-gray-800">Cash on Delivery</span>
+            </label>
           </div>
 
           <button

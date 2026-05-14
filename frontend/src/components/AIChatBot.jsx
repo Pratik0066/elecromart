@@ -1,91 +1,93 @@
-import { useState } from 'react';
-import { MessageSquare, Send, X, Bot } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { MessageSquare, Send, X, Bot, Loader2, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { useGetChatResponseMutation } from '../slices/productsApiSlice';
 
 const AIChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
   const [messages, setMessages] = useState([
-    { role: 'bot', text: 'Hi! I am your AI Assistant. What electronics are you looking for today?' }
+    { role: 'bot', text: "Hello! I'm your AI Shopping Assistant. Looking for a specific gadget or a budget-friendly deal?" }
   ]);
+  const chatRef = useRef(null);
+  const [getChatResponse, { isLoading }] = useGetChatResponseMutation();
+
+  useEffect(() => {
+    if (chatRef.current) chatRef.current.scrollTop = chatRef.current.scrollHeight;
+  }, [messages]);
 
   const handleSend = async () => {
     if (!input.trim()) return;
-
-    // Add user message
-    const userMessage = { role: 'user', text: input };
-    setMessages((prev) => [...prev, userMessage]);
-    
-    const query = input; // Capture the current input value
+    const userText = input;
+    setMessages(prev => [...prev, { role: 'user', text: userText }]);
     setInput('');
 
-   try {
-    // Call your new Backend AI Search API
-    const response = await fetch('/api/products/chat', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ message: query }),
-    });
-    const data = await response.json();
-
-    setMessages((prev) => [...prev, { 
-      role: 'bot', 
-      text: data.reply,
-      // If products are found, provide a link to the first one
-      suggestion: data.products.length > 0 ? `/product/${data.products[0]._id}` : null 
-    }]);
-  } catch (error) {
-    console.error("AI Chat Error:", error);
-  }
-};
+    try {
+      const response = await getChatResponse({ message: userText }).unwrap();
+      setMessages(prev => [...prev, { 
+        role: 'bot', 
+        text: response.reply,
+        products: response.products 
+      }]);
+    // eslint-disable-next-line no-unused-vars
+    } catch (err) {
+      setMessages(prev => [...prev, { role: 'bot', text: "I'm having trouble connecting to the catalog. Try again in a second!" }]);
+    }
+  };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
-      {/* Floating Button */}
-      <button 
-        onClick={() => setIsOpen(!isOpen)}
-        className="bg-blue-600 text-white p-4 rounded-full shadow-2xl hover:bg-blue-700 transition-all transform hover:scale-110"
-      >
-        {isOpen ? <X /> : <MessageSquare />}
-      </button>
-
-      {/* Chat Window */}
-      {isOpen && (
-        <div className="absolute bottom-20 right-0 w-80 md:w-96 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden flex flex-col h-[500px]">
-          <div className="bg-gray-900 p-4 flex items-center gap-3">
-            <Bot className="text-blue-400" />
-            <h3 className="text-white font-bold">Electronics AI Guide</h3>
+    <div className="fixed bottom-6 right-6 z-100">
+      {!isOpen ? (
+        <button 
+          onClick={() => setIsOpen(true)}
+          className="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-2xl shadow-2xl shadow-blue-600/40 transition-all hover:scale-110 flex items-center gap-2 group"
+        >
+          <Sparkles className="group-hover:rotate-12 transition-transform" />
+          <span className="font-bold text-sm pr-2">Ask AI</span>
+        </button>
+      ) : (
+        <div className="bg-white w-[380px] h-[520px] rounded-[2.5rem] shadow-[0_20px_60px_-15px_rgba(0,0,0,0.3)] flex flex-col overflow-hidden border border-gray-100">
+          {/* Header */}
+          <div className="bg-gray-900 p-6 flex justify-between items-center">
+            <div className="flex items-center gap-3">
+              <div className="bg-blue-600 p-2 rounded-xl text-white animate-pulse">
+                <Bot size={20} />
+              </div>
+              <h3 className="text-white font-black text-sm uppercase tracking-widest">Smart Guide</h3>
+            </div>
+            <button onClick={() => setIsOpen(false)} className="text-gray-400 hover:text-white"><X size={20}/></button>
           </div>
 
-          <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50">
+          {/* Messages */}
+          <div ref={chatRef} className="flex-1 overflow-y-auto p-5 space-y-4 bg-gray-50/50">
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-[80%] p-3 rounded-2xl text-sm ${
-                  msg.role === 'user' ? 'bg-blue-600 text-white' : 'bg-white border text-gray-800 shadow-sm'
+                <div className={`max-w-[85%] p-4 rounded-2xl text-sm leading-relaxed ${
+                  msg.role === 'user' ? 'bg-blue-600 text-white shadow-blue-200 shadow-lg' : 'bg-white border border-gray-100 text-gray-700 shadow-sm'
                 }`}>
                   {msg.text}
-                  {msg.suggestion && (
-                    <Link to={msg.suggestion} className="block mt-2 text-blue-500 font-bold hover:underline">
-                      View Recommended Products →
+                  {msg.products?.map(p => (
+                    <Link key={p._id} to={`/product/${p._id}`} className="mt-3 flex items-center gap-3 bg-gray-50 p-2 rounded-xl hover:bg-gray-100 transition-colors">
+                      <img src={p.image} className="w-10 h-10 object-contain" />
+                      <span className="font-bold text-blue-600 text-xs truncate">{p.name}</span>
                     </Link>
-                  )}
+                  ))}
                 </div>
               </div>
             ))}
+            {isLoading && <div className="flex gap-2 p-3 bg-white w-fit rounded-2xl border"><Loader2 className="animate-spin text-blue-600" size={16}/></div>}
           </div>
 
-          <div className="p-4 bg-white border-t flex gap-2">
+          {/* Input */}
+          <div className="p-4 bg-white border-t border-gray-100 flex gap-2">
             <input 
-              type="text" 
-              value={input}
+              value={input} 
               onChange={(e) => setInput(e.target.value)}
-              onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-              placeholder="Ask me anything..."
-              className="flex-1 bg-gray-100 border-none rounded-xl px-4 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+              onKeyDown={(e) => e.key === 'Enter' && handleSend()}
+              placeholder="Ask about a product..."
+              className="flex-1 bg-gray-50 border-none rounded-xl px-4 py-2 text-sm focus:ring-2 focus:ring-blue-600/20"
             />
-            <button onClick={handleSend} className="bg-blue-600 text-white p-2 rounded-xl">
-              <Send size={18} />
-            </button>
+            <button onClick={handleSend} className="bg-gray-900 text-white p-2.5 rounded-xl"><Send size={18}/></button>
           </div>
         </div>
       )}

@@ -1,5 +1,6 @@
 import { useGetUsersQuery, useDeleteUserMutation } from '../../slices/usersApiSlice';
 import { Trash2, CheckCircle, XCircle, Users, Mail, ShieldCheck } from 'lucide-react';
+import { toast } from 'react-toastify';
 
 const UserListPage = () => {
   const { data: users, refetch, isLoading, error } = useGetUsersQuery();
@@ -10,9 +11,9 @@ const UserListPage = () => {
       try {
         await deleteUser(id);
         refetch();
-        alert('User deleted successfully');
+        toast.success('User deleted successfully');
       } catch (err) {
-        alert(err?.data?.message || err.error);
+        toast.error(err?.data?.message || err.error);
       }
     }
   };
